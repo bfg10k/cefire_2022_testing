@@ -1,35 +1,27 @@
 package org.cefire.library;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class BookCollectionTest {
 
     @Test
     public void shouldFindABookByISBN() {
+        final String isbnToLocate = "un-isbn-2";
+
         BookCollection books = new BookCollection(new Book[]{
                 new Book("un-isbn-1", "un titulo 1", "un autor 1"),
-                new Book("un-isbn-2", "un titulo 2", "un autor 2"),
-                new Book("un-isbn-2", "un titulo 2", "un autor 2"),
+                new Book(isbnToLocate, "un titulo 2", "un autor 2"),
+                new Book(isbnToLocate, "un titulo 2", "un autor 2"),
                 new Book("un-isbn-3", "un titulo 3", "un autor 3"),
         });
 
-        if (!books.find("un-isbn-2").isEmpty()) {
-            boolean allConcidencesAreCorrect = true;
+        List<Book> foundBooks = books.find(isbnToLocate);
 
-            for (Book book : books.find("un-isbn-2")) {
-                if (!book.getISBN().equals("un-isbn-2")) {
-                    allConcidencesAreCorrect = false;
-                    break;
-                }
-            }
+        Assertions.assertFalse(foundBooks::isEmpty);
 
-            if (allConcidencesAreCorrect) {
-                System.out.println("✔ Should find a book by ISBN");
-
-                return;
-            }
-
-            System.out.println("✘ Should find a book by ISBN");
-        }
+        foundBooks.forEach((Book book)-> Assertions.assertEquals(isbnToLocate, book.getISBN()));
     }
 }
