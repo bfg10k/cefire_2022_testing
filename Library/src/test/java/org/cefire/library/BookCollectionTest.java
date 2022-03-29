@@ -24,4 +24,16 @@ public class BookCollectionTest {
 
         foundBooks.forEach((Book book)-> Assertions.assertEquals(isbnToLocate, book.getISBN()));
     }
+
+    @Test
+    public void shouldGetAnEmptyListIfNoMatchesAreFound(){
+        final String isbnToLocate = "un-isnb-que-no-existe";
+        BookCollection books = new BookCollection(new Book[]{
+                new Book("un-isbn-1", "un titulo 1", "un autor 1"),
+                new Book("un-isbn-2", "un titulo 2", "un autor 2"),
+                new Book("un-isbn-3", "un titulo 3", "un autor 3"),
+        });
+
+        Assertions.assertTrue(books.find(isbnToLocate).isEmpty());
+    }
 }
