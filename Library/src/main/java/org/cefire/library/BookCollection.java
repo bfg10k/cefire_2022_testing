@@ -37,4 +37,22 @@ public class BookCollection {
 
         return foundBooks;
     }
+
+    public List<Book> findOrFail(String textToFind) {
+        List<Book> foundBooks = new ArrayList<>();
+
+        for(Book book : this.books){
+            if(book.getISBN().equals(textToFind) || book.getTitle().contains(textToFind)){
+                foundBooks.add(book);
+            }
+        }
+
+        if(foundBooks.isEmpty()){
+            throw new ExpectedToFindAtLeastABook();
+        }
+        return foundBooks;
+    }
+
+    public static class ExpectedToFindAtLeastABook extends RuntimeException {
+    }
 }
