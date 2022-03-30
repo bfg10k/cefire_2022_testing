@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class BookCollectionTest {
 
     @Test
@@ -20,9 +24,9 @@ public class BookCollectionTest {
 
         List<Book> foundBooks = books.find(isbnToLocate);
 
-        Assertions.assertFalse(foundBooks::isEmpty);
+        assertThat(foundBooks.isEmpty(), is(false));
 
-        foundBooks.forEach((Book book) -> Assertions.assertEquals(isbnToLocate, book.getISBN()));
+        foundBooks.forEach((Book book) -> assertThat(isbnToLocate, is(equalTo(book.getISBN()))));
     }
 
     @Test
@@ -34,7 +38,7 @@ public class BookCollectionTest {
                 new Book("un-isbn-3", "un titulo 3", "un autor 3"),
         });
 
-        Assertions.assertTrue(books.find(isbnToLocate).isEmpty());
+        assertThat(books.find(isbnToLocate).isEmpty(), is(true));
     }
 
     @Test
@@ -49,9 +53,8 @@ public class BookCollectionTest {
 
         List<Book> foundBooks = books.findCopies(bookToBeFound);
 
-        Assertions.assertFalse(foundBooks.isEmpty());
-        foundBooks.forEach((Book book) -> Assertions.assertEquals(book, bookToBeFound)
-        );
+        assertThat(foundBooks.isEmpty(), is(false));
+        foundBooks.forEach((Book book) -> assertThat(book, is(equalTo(bookToBeFound))));
     }
 
     @Test
