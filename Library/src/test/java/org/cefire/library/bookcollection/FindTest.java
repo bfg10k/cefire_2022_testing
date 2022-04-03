@@ -1,16 +1,16 @@
-package org.cefire.library;
+package org.cefire.library.bookcollection;
 
+import org.cefire.library.Book;
+import org.cefire.library.BookCollection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
-public class BookCollectionTest {
-
+public class FindTest {
     @Test
     public void shouldFindABookByISBN() {
         final String isbnToLocate = "un-isbn-2";
@@ -41,43 +41,16 @@ public class BookCollectionTest {
         assertThat(books.find(isbnToLocate).isEmpty(), is(true));
     }
 
-    @Test
-    public void shouldFindCopiesOfABook() {
-        final Book bookToBeFound = new Book("libro-que-debe-encontrase", "un titulo 1", "un autor 1");
-        BookCollection books = new BookCollection(new Book[]{
-                new Book("libro-que-debe-encontrase", "un titulo 1", "un autor 1"),
-                new Book("libro-que-debe-encontrase", "un titulo 1", "un autor 1"),
-                new Book("un-isbn-2", "un titulo 2", "un autor 2"),
-                new Book("un-isbn-3", "un titulo 3", "un autor 3"),
-        });
-
-        List<Book> foundBooks = books.findCopies(bookToBeFound);
-
-        assertThat(foundBooks.isEmpty(), is(false));
-        foundBooks.forEach((Book book) -> assertThat(book, is(equalTo(bookToBeFound))));
-    }
-
-    @Test
-    public void shouldGetExceptionWhenUsingFindOrFailWithANonExistentEntry() {
-        final String isbnToLocate = "un-texto-que-no-existe-como-isbn-o-author";
-        BookCollection books = new BookCollection(new Book[]{
-                new Book("un-isbn-1", "un titulo 1", "un autor 1"),
-                new Book("un-isbn-2", "un titulo 2", "un autor 2"),
-                new Book("un-isbn-3", "un titulo 3", "un autor 3"),
-        });
-
-        Assertions.assertThrows(BookCollection.ExpectedToFindAtLeastABook.class, () -> books.findOrFail(isbnToLocate));
-    }
 
     @Test
     public void shouldFindBooksByPartialTitle(){
         final String partialTitleToLocate = "titulo-a-encontrar";
 
         BookCollection books = new BookCollection(new Book[]{
-           new Book("un-isbn-cualquiera", partialTitleToLocate, "un-autor-cualquiera"),
-           new Book("un-isbn-cualquiera-2", partialTitleToLocate.concat("-en-la-colección"), "un-autor-cualquiera"),
-           new Book("un-isbn-cualquiera-44543", "un-titulo-no-coincidente", "un-autor-cualquiera"),
-           new Book("un-isbn-cualquiera-423423", "otro-titulo-no-coincidente", "un-autor-cualquiera"),
+                new Book("un-isbn-cualquiera", partialTitleToLocate, "un-autor-cualquiera"),
+                new Book("un-isbn-cualquiera-2", partialTitleToLocate.concat("-en-la-colección"), "un-autor-cualquiera"),
+                new Book("un-isbn-cualquiera-44543", "un-titulo-no-coincidente", "un-autor-cualquiera"),
+                new Book("un-isbn-cualquiera-423423", "otro-titulo-no-coincidente", "un-autor-cualquiera"),
         });
 
         List<Book> foundBooks = books.find(partialTitleToLocate);
