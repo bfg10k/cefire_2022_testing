@@ -14,7 +14,6 @@ public class FindTest {
     @Test
     public void shouldFindABookByISBN() {
         final String isbnToLocate = "un-isbn-2";
-
         BookCollection books = new BookCollection(new Book[]{
                 new Book("un-isbn-1", "un titulo 1", "un autor 1"),
                 new Book(isbnToLocate, "un titulo 5", "un autor 4"),
@@ -54,6 +53,7 @@ public class FindTest {
         });
 
         List<Book> foundBooks = books.find(partialTitleToLocate);
+
         Assertions.assertEquals(2, foundBooks.size());
         foundBooks.forEach((Book book) -> Assertions.assertTrue(book.getTitle().contains(partialTitleToLocate)));
     }
