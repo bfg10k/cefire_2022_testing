@@ -3,8 +3,10 @@ package org.cefire.library.user;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
 import org.cefire.library.util.json.deserializer.LocalDateDeserializer;
 import org.cefire.library.util.json.serializer.LocalDateSerializer;
+
 import spark.Request;
 import spark.Response;
 
@@ -29,18 +31,21 @@ public class RegistrationController {
         String fullname = request.queryParamOrDefault("fullname", "");
         String dni = request.queryParamOrDefault("dni", "");
         String strDate = request.queryParamOrDefault("birthdate", "");
+        String homeDir = System.getenv("USERPROFILE");
 
         try {
             LocalDate birthdate = LocalDate.parse(strDate, DateTimeFormatter.ISO_DATE);
             User user = new User(fullname, dni, birthdate);
-            String text = Files.readString(Paths.get("c:/users/marcos/library/users.json"));
+
+            String text = Files.readString(Paths.get(homeDir + "/library/users.json"));
             Type persistedUsersType = new TypeToken<ArrayList<User>>() {
             }.getType();
             Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
                     .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
             List<User> persistedUsers = gson.fromJson(text, persistedUsersType);
             persistedUsers.add(user);
-            Files.writeString(Paths.get("c:/users/marcos/library/users.json"), gson.toJson(persistedUsers));
+
+            Files.writeString(Paths.get(homeDir + "/library/users.json"), gson.toJson(persistedUsers));
             Map<String, User> successContent = new HashMap<>();
             successContent.put("registeredUser", user);
             return gson.toJson(successContent);
