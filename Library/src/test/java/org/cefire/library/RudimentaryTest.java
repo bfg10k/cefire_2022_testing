@@ -1,5 +1,8 @@
 package org.cefire.library;
 
+import org.cefire.library.book.Book;
+import org.cefire.library.book.BookCollection;
+
 public class RudimentaryTest {
     public void shouldFindABookByISBN(){
         BookCollection books = new BookCollection(new Book[]{

@@ -1,4 +1,6 @@
-package org.cefire.library;
+package org.cefire.library.book;
+
+import org.cefire.library.book.Book;
 
 import java.util.ArrayList;
 import java.util.Arrays;
