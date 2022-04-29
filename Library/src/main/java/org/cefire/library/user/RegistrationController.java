@@ -27,25 +27,26 @@ import java.util.List;
 import java.util.Map;
 
 public class RegistrationController {
+
     public static String register(Request request, Response response) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+                .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
+
         String fullname = request.queryParamOrDefault("fullname", "");
         String dni = request.queryParamOrDefault("dni", "");
         String strDate = request.queryParamOrDefault("birthdate", "");
         String homeDir = System.getenv("USERPROFILE");
 
+
         try {
             LocalDate birthdate = LocalDate.parse(strDate, DateTimeFormatter.ISO_DATE);
             User user = new User(fullname, dni, birthdate);
 
-            String text = Files.readString(Paths.get(homeDir + "/library/users.json"));
-            Type persistedUsersType = new TypeToken<ArrayList<User>>() {
-            }.getType();
-            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
-                    .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
-            List<User> persistedUsers = gson.fromJson(text, persistedUsersType);
-            persistedUsers.add(user);
+            List<User> persistedUsers = getUsers(gson, homeDir);
 
-            Files.writeString(Paths.get(homeDir + "/library/users.json"), gson.toJson(persistedUsers));
+            persistedUsers.add(user);
+            saveUsers(gson, homeDir, persistedUsers);
+
             Map<String, User> successContent = new HashMap<>();
             successContent.put("registeredUser", user);
             return gson.toJson(successContent);
@@ -54,13 +55,25 @@ public class RegistrationController {
             Map<String, String> errorContent = new HashMap<>();
             errorContent.put("error", "101");
             errorContent.put("message", "Name, dni, or date are not valid.");
-            return new Gson().toJson(errorContent);
+            return gson.toJson(errorContent);
         } catch (Exception exception) {
             response.status(500);
             Map<String, String> errorContent = new HashMap<>();
             errorContent.put("error", "201");
             errorContent.put("message", "Could not save User. Try later.");
-            return new Gson().toJson(errorContent);
+            return gson.toJson(errorContent);
         }
+    }
+
+    protected static void saveUsers(Gson gson, String homeDir, List<User> persistedUsers) throws IOException {
+        Files.writeString(Paths.get(homeDir + "/library/users.json"), gson.toJson(persistedUsers));
+    }
+
+    protected static List<User> getUsers(Gson gson, String homeDir) throws IOException {
+        String text = Files.readString(Paths.get(homeDir + "/library/users.json"));
+        Type persistedUsersType = new TypeToken<ArrayList<User>>() {
+        }.getType();
+        List<User> persistedUsers = gson.fromJson(!text.equals("") ? text : "[]" , persistedUsersType);
+        return persistedUsers;
     }
 }
