@@ -1,7 +1,7 @@
 package org.cefire.library.bookcollection;
 
-import org.cefire.library.Book;
-import org.cefire.library.BookCollection;
+import org.cefire.library.book.Book;
+import org.cefire.library.book.BookCollection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

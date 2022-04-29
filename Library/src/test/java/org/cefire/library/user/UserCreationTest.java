@@ -1,55 +1,76 @@
 package org.cefire.library.user;
 
-import org.cefire.library.User;
-import org.cefire.library.UserShouldBeAnAdultException;
-import org.cefire.library.UsernameDoesNotMeetLenghtException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class UserCreationTest {
 
     @Test
-    public void shouldBeAnAdult(){
-        Assertions.assertDoesNotThrow(()-> new User(18,"Adrián"));
-        Assertions.assertDoesNotThrow(()-> new User(47,"Adrián"));
-        Assertions.assertDoesNotThrow(()-> new User(64,"Adrián"));
+    public void canBeCreatedWithValidAge(){
+        assertDoesNotThrow(()-> new User("UnNombreValido", "35430884M", dateYearsAgo(6)));
+        assertDoesNotThrow(()-> new User("UnNombreValido", "35430884M", dateYearsAgo(55)));
+        assertDoesNotThrow(()-> new User("UnNombreValido", "35430884M", dateYearsAgo(125)));
     }
 
     @Test
     public void shouldBeYoungerThanThresshold(){
-        Assertions.assertThrows(UserShouldBeAnAdultException.class, ()-> new User(65,"Adrián"));
-        Assertions.assertThrows(UserShouldBeAnAdultException.class, ()-> new User(128,"Adrián"));
+        assertThrows(NonValidAgeException.class, ()-> new User("UnNombreValido", "35430884M", dateYearsAgo(126)));
+        assertThrows(NonValidAgeException.class, ()-> new User("UnNombreValido", "35430884M", dateYearsAgo(180)));
     }
 
     @Test
-    public void cantBeMinor(){
-        Assertions.assertThrows(UserShouldBeAnAdultException.class, ()-> new User(17,"Adrián"));
-        Assertions.assertThrows(UserShouldBeAnAdultException.class, ()-> new User(0,"Adrián"));
+    public void shouldBeOlderThanThresshold(){
+        assertThrows(NonValidAgeException.class, ()-> new User("UnNombreValido", "35430884M", dateYearsAgo(5)));
+        assertThrows(NonValidAgeException.class, ()-> new User("UnNombreValido", "35430884M", dateYearsAgo(2)));
+        assertThrows(NonValidAgeException.class, ()-> new User("UnNombreValido", "35430884M", dateYearsAgo(0)));
     }
 
     @Test
-    public void shouldBeLongerThanThresshold(){
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, ()->new User(27, "Aa"));
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, ()->new User(27, ""));
+    public void fullnameShouldBeLongerThanThresshold(){
+        assertThrows(NonValidNameException.class, ()-> new User("Aa", "35430884M", dateYearsAgo(16)));
+        assertThrows(NonValidNameException.class, ()-> new User("", "35430884M", dateYearsAgo(16)));
+
     }
 
     @Test
-    public void shouldBeShorterThanThresshold(){
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, ()->new User(27, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, ()->new User(27, "AaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+    public void fullnameShouldBeShorterThanThresshold(){
+        assertThrows(NonValidNameException.class, ()-> new User("thisStringIsLongerThanThressholdByJustOne", "35430884M", dateYearsAgo(16)));
+        assertThrows(NonValidNameException.class, ()-> new User("thisStringIsQuiteLongerThanThresshold cL2pZ4azQHYWFtaqrAQlMMHE3R92upwn2JicamXHtvbxU9VY0c02", "35430884M", dateYearsAgo(16)));
     }
 
     @Test
-    public void shouldCointainValidCharacters(){
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, () -> new User(27, "%%%%%"));
-        Assertions.assertThrows(UsernameDoesNotMeetLenghtException.class, () -> new User(27, "%%$$$"));
+    public void fullnameShouldCointainValidCharacters(){
+        assertThrows(NonValidNameException.class, ()-> new User("thisStringContainsInvalidCharactersLike%Or$", "35430884M", dateYearsAgo(16)));
+        assertThrows(NonValidNameException.class, ()-> new User("thisStringContainsInvalidCharactersLike_Or!And[][}", "35430884M", dateYearsAgo(16)));
     }
 
     @Test
     public void canCreateUserWithValidName(){
-        Assertions.assertDoesNotThrow(()-> new User(27, "Manuel"));
-        Assertions.assertDoesNotThrow(()-> new User(27, "José Manuel"));
-        Assertions.assertDoesNotThrow(()-> new User(27, "José Manñçel"));
-        Assertions.assertDoesNotThrow(()-> new User(27, "José Manïèl"));
+        assertDoesNotThrow(()-> new User("Bjørg", "35430884M", dateYearsAgo(16)));
+        assertDoesNotThrow(()-> new User("José Manuel", "35430884M", dateYearsAgo(16)));
+        assertDoesNotThrow(()-> new User("Björk", "35430884M", dateYearsAgo(16)));
+        assertDoesNotThrow(()-> new User("François Roland Truffaut", "35430884M", dateYearsAgo(16)));
+    }
+
+    @Test
+    public void cantBeCreatedWithInvalidDni(){
+        assertThrows(NonValidDniException.class, ()-> new User("Bjørg", "35430884Z", dateYearsAgo(16)));
+        assertThrows(NonValidDniException.class, ()-> new User("Bjørg", "UnDniInvalido", dateYearsAgo(16)));
+        assertThrows(NonValidDniException.class, ()-> new User("Bjørg", "6666666666", dateYearsAgo(16)));
+    }
+
+    @Test
+    public void canBeCreatedWithValidDni(){
+        assertDoesNotThrow(()-> new User("Bjørg", "29131374B", dateYearsAgo(16)));
+        assertDoesNotThrow(()-> new User("Bjørg", "55240842V", dateYearsAgo(16)));
+        assertDoesNotThrow(()-> new User("Bjørg", "86574737T", dateYearsAgo(16)));
+    }
+
+    private LocalDate dateYearsAgo(int years) {
+        return LocalDate.now().plus(-years, ChronoUnit.YEARS);
     }
 }
