@@ -10,23 +10,19 @@ import org.cefire.library.util.json.serializer.LocalDateSerializer;
 import spark.Request;
 import spark.Response;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RegistrationController {
+
     public static String register(Request request, Response response) {
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
                 .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
@@ -36,7 +32,8 @@ public class RegistrationController {
         String strDate = request.queryParamOrDefault("birthdate", "");
 
         try {
-            User user = new RegistrationUseCase(new UserRepository(gson)).execute(fullname, dni, strDate);
+            User user = new RegistrationUseCase(new UserRepository(gson)).execute(fullname,dni, strDate);
+
             Map<String, User> successContent = new HashMap<>();
             successContent.put("registeredUser", user);
             return gson.toJson(successContent);

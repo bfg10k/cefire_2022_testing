@@ -11,20 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
+
     private final Gson gson;
+    private final String homeDir;
 
     public UserRepository(Gson gson) {
         this.gson = gson;
+        this.homeDir = System.getenv("USERPROFILE");
+
     }
 
-    public void saveUsers(String homeDir, List<User> persistedUsers) throws IOException {
-        Files.writeString(Paths.get(homeDir + "/library/users.json"), this.gson.toJson(persistedUsers));
+    protected void saveUser(List<User> persistedUsers) throws IOException {
+
+        Files.writeString(Paths.get(this.homeDir + "/library/users.json"), this.gson.toJson(persistedUsers));
     }
 
-    public List<User> getUsers(String homeDir) throws IOException {
-        String text = Files.readString(Paths.get(homeDir + "/library/users.json"));
+    protected List<User> getUsers() throws IOException {
         Type persistedUsersType = new TypeToken<ArrayList<User>>() {
         }.getType();
-        return this.gson.fromJson(!text.equals("") ? text:"[]", persistedUsersType);
+        return this.gson.fromJson(Files.readString(Paths.get(this.homeDir + "/library/users.json")), persistedUsersType);
     }
 }

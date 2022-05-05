@@ -5,12 +5,12 @@ import java.time.Period;
 
 public class User {
 
-    private final String fullName;
+    private final String fullname;
     private final String dni;
     private final LocalDate birthdate;
 
-    public User(String fullName, String dni, LocalDate birthdate) {
-        if (!fullName.matches("[A-Za-zÀ-ÖØ-öø-ÿ ]{3,40}")) {
+    public User(String fullname, String dni, LocalDate birthdate) {
+        if (!fullname.matches("[A-Za-zÀ-ÖØ-öø-ÿ ]{3,40}")) {
             throw new NonValidNameException();
         }
 
@@ -22,13 +22,13 @@ public class User {
             throw new NonValidAgeException();
         }
 
-        this.fullName = fullName;
+        this.fullname = fullname;
         this.dni = dni;
         this.birthdate = birthdate;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFullname() {
+        return fullname;
     }
 
     public String getDni() {
