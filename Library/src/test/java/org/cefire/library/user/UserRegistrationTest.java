@@ -14,8 +14,6 @@ import java.time.LocalDate;
 public class UserRegistrationTest {
     @Test
     public void canRegisterUserOlderThanThresshold() throws IOException {
-        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
-                .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
          User user = new RegistrationUseCase(new TestFileUserRepository())
                  .execute("José Manuel", "11111111H", "1983-06-04");
 
