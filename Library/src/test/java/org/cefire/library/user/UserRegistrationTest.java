@@ -16,7 +16,7 @@ public class UserRegistrationTest {
     public void canRegisterUserOlderThanThresshold() throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
                 .registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).setPrettyPrinting().create();
-         User user = new RegistrationUseCase(new TestUserRepository(gson))
+         User user = new RegistrationUseCase(new TestFileUserRepository())
                  .execute("José Manuel", "11111111H", "1983-06-04");
 
         Assertions.assertEquals(user.getFullname() , "José Manuel");
